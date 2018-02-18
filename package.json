@@ -1,0 +1,28 @@
+{
+  "name": "sqlstorefront",
+  "version": "1.0.0",
+  "description": "sql storfront bootcamp application",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ejstraband/sqlStorefront.git"
+  },
+  "keywords": [
+    "class",
+    "sql",
+    "node"
+  ],
+  "author": "Eric J.S. Traband",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ejstraband/sqlStorefront/issues"
+  },
+  "homepage": "https://github.com/ejstraband/sqlStorefront#readme",
+  "dependencies": {
+    "inquirer": "^5.1.0",
+    "sql": "^0.78.0"
+  }
+}
