@@ -48,4 +48,3 @@ VALUES ( "Car Battery", "Automotive", 50, 15 );
 
 INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES ( "Hoodie", "Clothing", 25, 35 );
-

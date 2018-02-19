@@ -4,7 +4,8 @@
 var inquirer = require('inquirer');
 var mysql = require('mysql');
 var console = require('better-console');
-
+var currentSelection;
+var currentQuantity;
 // =========================
 // sql setup
 var connection = mysql.createConnection({
@@ -32,17 +33,50 @@ var connection = mysql.createConnection({
 // })
 // =========================
 
+// testing
+itemRequested = process.argv[2];
+console.log("Item to try: " + itemRequested);
+
+chooseFunction();
 
 
+function chooseFunction() {
+    inquirer
+      .prompt({
+        name: "action",
+        type: "rawlist",
+        message: "Pick a function",
+        choices: [
+          "Display Inventory",
+          "Attempt a Purchase",
+          "Direct DB Quantity Check"
+        ]
+      })
+      .then(function(answer) {
+        switch (answer.action) {
+          case "Display Inventory":
+            displayInventory();
+            break;
+          case "Attempt a Purchase":
+            buySomething();
+            break;
+          case "Direct DB Quantity Check":
+            queryInventory();
+            break;
+        }
+      });
+  }
 
 
 // =========================
 // APPLICATION WALK THROUGH
 
     // display inventory
-    displayInventory();
+
     // prompt the user for input
         // What product ID would you like?
+        // displayInventory();
+        // itemSelect()
         // How many?
 
     // purchase operation
@@ -60,6 +94,10 @@ var connection = mysql.createConnection({
 
 // =========================
 
+// prompt for app testing
+//   display an ID for an item
+
+
 // =========================
 // Functions
 
@@ -75,24 +113,95 @@ var connection = mysql.createConnection({
             connection.query("SELECT * FROM products", function(err, res) {
               if (err) throw err;
               console.table(res);
-            //   for (var i=0; i<res.length; i++) {
-            //     console.log("==========");
-            //     console.log("Item ID : " + res[i].item_id);
-            //     console.log("Name : " + res[i].product_name);
-            //     console.log("Department : " + res[i].department_name);
-            //     console.log("Price : $" + res[i].price + ".00");
-            //     console.log("In Stock : " + res[i].stock_quantity);
-            //     console.log("==========");
-            // }
               connection.end();
+              chooseFunction();
             });
           }
     }
 
+    // query inventory level
+    function queryInventory() {
+        connection.connect(function(err) {
+            if (err) throw err;
+            // console.log("connected as id " + connection.threadId);
+            afterConnection();
+            });
+            
+            function afterConnection() {
+            connection.query(("SELECT stock_quantity FROM products WHERE item_id IS " + itemRequested), function(err, res) {
+                if (err) throw err;
+                console.log(res);
+                connection.end();
+            });
+            }
+    }
+
+    function buySomething() {
+        console.log("Let's get that order going!");
+        // var itemRequested;
+        var quantityRequested;
+        var quantityAvailable;
+
+        inquirer
+            .prompt([
+                {
+                    name: "itemNumber",
+                    type: "input",
+                    message: "Please choose your item number."
+                },
+                {
+                    name: "quantity",
+                    type: "input",
+                    message: "How many would you like?"
+                }
+            ])
+            .then(function(answer) {
+                itemRequested = answer.itemNumber;
+                console.log("Item Number: " + itemRequested);
+                quantityRequested = answer.quantity;
+                console.log("Quantity Requested: " + quantityRequested);
+            })
+            
+    }
 
     // user prompt
+    // function itemSelect() {
+    //     inquirer
+    //       .prompt(
+    //         {
+    //         name: "item_id",
+    //         type: "input",
+    //         message: "What product would you like to buy? Please input an Item_ID\n\n"
+    //         },
+    //         {
+    //         name: "quantity",
+    //         type: "input",
+    //         message: "How many woud you like?\n\n"
+    //         }
+    //     ).then(function(answer) {
+    //         currentSelection = answer.item_id;
+    //         console.log("Item ID Selected: " + currentSelection);
+    //       });
+        //   checkInventory();
+    //   }
 
     // stock check
+    // function checkInventory() {
+    //     connection.connect(function(err) {
+    //         if (err) throw err;
+    //         // console.log("connected as id " + connection.threadId);
+    //         afterConnection();
+    //       });
+          
+    //       function afterConnection() {
+    //         connection.query("SELECT stock_quantity FROM products WHERE item_id IS " + currentSelection, function(err, res) {
+    //           if (err) throw err;
+    //           console.table(res);
+    //           connection.end();
+    //         });
+    //       }
+    // }
+
 
     // adjust stock based on purchase
 
