@@ -23,10 +23,10 @@ var connection = mysql.createConnection({
 // =========================
 
 // testing
-itemSelection = process.argv[2];
-console.log("Item to try: " + itemSelection);
-desiredQuantity = process.argv[3];
-console.log("Quantity Requested: " + desiredQuantity);
+// itemSelection = process.argv[2];
+// console.log("Item to try: " + itemSelection);
+// desiredQuantity = process.argv[3];
+// console.log("Quantity Requested: " + desiredQuantity);
 
 connection.connect(function(err) {
   if (err) throw err;
@@ -47,9 +47,9 @@ function chooseFunction() {
         // "Attempt a Purchase",
           "Attempt to Purchase",
         // quantity query
-          "Item Quantity Check",
+          // "Item Quantity Check",
         // Calculate Total
-          "Item Price Check",
+          // "Item Price Check",
         // exit out
           "Exit"
         ]
@@ -100,17 +100,72 @@ function queryInventoryLevel() {
 
 // buy something
 function buySomething() {
-  console.log("buy something\n");
-  chooseFunction();
+  var itemToPurchase;
+  var desiredQuantity;
+  console.log("Let's buy something!!\n");
+
+  var purchaseQuestions = [
+    {
+      name: "item",
+      type: "input",
+      message: "Please choose an item_id"
+    }, 
+    {
+      name: "quantity",
+      type: "input",
+      message: "How many would you like?"
+    }
+  ];
+
+  // propmt for item selection and quantity
+  inquirer.prompt(purchaseQuestions).then(answers => {
+    itemToPurchase = answers.item;
+    desiredQuantity = answers.quantity;
+    console.log("Item_ID Selected: " + itemToPurchase);
+    console.log("Desired Quantity: " + desiredQuantity);
+  
+    // lookup price
+    var itemToPurchasePrice = lookUpItemCost(itemToPurchase);
+    console.log("Individual Cost: " + itemToPurchasePrice)
+    // check stock
+    var amountInStock = lookUpItemQuantityOnHand(itemToPurchase);
+    // calculate purchase price
+    var totalPurchasePrice = itemToPurchasePrice * desiredQuantity;
+    console.log("Total Purchase Price: $" + totalPurchasePrice + ".00");
+
+    adjustInventory(desiredQuantity);
+  });
+
 }
 
 // look up price
-function lookUpItemCost() {
+function lookUpItemCost(thingToBuy) {
   console.log("Price Check!\n");
-  connection.query(("SELECT price FROM products WHERE item_id = " + itemSelection), function(err, res) {
+  connection.query(("SELECT price FROM products WHERE item_id = " + thingToBuy), function(err, res) {
     if (err) throw err;
     var itemPrice = res[0].price;
     console.log("$" + itemPrice + ".00 Each\n");
-  chooseFunction();
+    // chooseFunction();
 });
+}
+
+// look up quantity in stock
+function lookUpItemQuantityOnHand(itemToPurchase) {
+  console.log("Checking Quantity!\n");
+  connection.query(("SELECT stock_quantity FROM products WHERE item_id = " + itemToPurchase), function(err, res) {
+    if (err) throw err;
+    var itemStockCount = res[0].stock_quantity;
+    console.log(itemStockCount + " in stock");
+    // chooseFunction();
+});
+}
+
+// adjust inventory totals
+function adjustInventory(desiredQuantity) {
+  console.log("adjusting inventory by: " + desiredQuantity);
+
+  
+
+  process.exit(0);
+
 }
