@@ -30,7 +30,7 @@ ScreenShots:
 * Purchase  
 ![Purchase](./assets/4.completedPurchase.png)  
   
-  * Adjust Inventory Noted  
+* Adjust Inventory Noted  
 ![Inventory Adjustment](./assets/5.placeholderInventoryAdjustmentProof.png)  
 
 * Exit  
