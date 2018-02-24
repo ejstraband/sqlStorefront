@@ -35,6 +35,9 @@ ScreenShots:
 
 * Exit  
 ![Exit](./assets/6.exitFunction.png)  
+  
+* Demo Video
+![demo](https://www.dropbox.com/s/39kfmtme6b10ntv/demo.mov?dl=0)
 
 Future Enhancements:
 A Manager view to adjust inventory levels
