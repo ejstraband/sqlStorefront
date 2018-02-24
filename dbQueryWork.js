@@ -94,9 +94,10 @@ function queryInventoryLevel() {
         console.log("Let me check for you.\n");
         var itemQuantityInStock = res[0].stock_quantity;
         console.log(itemQuantityInStock + " of these in stock\n");
-        chooseFunction();
+        return itemQuantityInStock;
       });
     }
+
 
 // buy something
 function buySomething() {
@@ -169,3 +170,15 @@ function adjustInventory(desiredQuantity) {
   process.exit(0);
 
 }
+
+
+    // lookup price
+    var itemToPurchasePrice = lookUpItemCost(itemToPurchase);
+    console.log("Individual Cost: " + itemToPurchasePrice)
+    // check stock
+    var amountInStock = lookUpItemQuantityOnHand(itemToPurchase);
+    // calculate purchase price
+    var totalPurchasePrice = itemToPurchasePrice * desiredQuantity;
+    console.log("Total Purchase Price: $" + totalPurchasePrice + ".00");
+
+    adjustInventory(desiredQuantity);
