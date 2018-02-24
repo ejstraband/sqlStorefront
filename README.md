@@ -18,8 +18,8 @@ The purchase function has several embedded callback functions. It starts with as
 Walkthrough Video:
 
 ScreenShots:
-![Start](/assets/1.homeScreen.png)
-Format: ![App Start]
+![Start](./assets/1.homeScreen.png)
+<!-- Format: ![App Start] -->
 
 Future Enhancements:
 A Manager view to adjust inventory levels
