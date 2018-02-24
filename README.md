@@ -17,7 +17,8 @@ The purchase function has several embedded callback functions. It starts with as
 
 Walkthrough Video:
 
-ScreenShots:
+ScreenShots:  
+
 ![Start](./assets/1.homeScreen.png)
 <!-- Format: ![App Start] -->
 
