@@ -19,8 +19,17 @@ Walkthrough Video:
 
 ScreenShots:  
 
-![Start](./assets/1.homeScreen.png)
-<!-- Format: ![App Start] -->
+![Start](./assets/1.homeScreen.png)  
+
+![Inventory](./assets/2.displayInventory.png)  
+
+![Insuffient Stock](./assets/3.attemptPurchaseStockInsufficient.png)  
+
+![Purchase](./assets/4.completedPurchase.png)  
+  
+![Inventory Adjustment](./assets/5.placeholderInventoryAdjustmentProof.png)  
+
+![Exit](./assets/6.exitFunction.png)  
 
 Future Enhancements:
 A Manager view to adjust inventory levels
