@@ -39,6 +39,9 @@ ScreenShots:
 * App in Action!
 [Demo Video](https://www.dropbox.com/s/39kfmtme6b10ntv/demo.mov?dl=0 "Walkthrough")
 
+Errata:
+Inventory adjustment function not work working.
+
 Future Enhancements:
 A Manager view to adjust inventory levels
 A Supervisor View to report on popular purchases
