@@ -36,7 +36,7 @@ ScreenShots:
 * Exit  
 ![Exit](./assets/6.exitFunction.png)  
   
-* Demo Video
+* App in Action!
 [Demo Video](https://www.dropbox.com/s/39kfmtme6b10ntv/demo.mov?dl=0 "Walkthrough")
 
 Future Enhancements:
