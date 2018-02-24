@@ -4,8 +4,7 @@
 var inquirer = require('inquirer');
 var mysql = require('mysql');
 var console = require('better-console');
-var currentSelection;
-var currentQuantity;
+
 // =========================
 // sql setup
 var connection = mysql.createConnection({
@@ -18,25 +17,16 @@ var connection = mysql.createConnection({
     // Your password
     password: "yourpassword",
     database: "bamazon"
+
   });
 // =========================
 
-// dotenv configs for later
-// =========================
-// var db = require('dotenv').config();
+// Initial DB Connection
+connection.connect(function(err) {
+  if (err) throw err;
+});
 
-// var db = require('db');
-// db.connect({
-//   host: process.env.DB_HOST,
-//   username: process.env.DB_USER,
-//   password: process.env.DB_PASS
-// })
-// =========================
-
-// testing
-itemRequested = process.argv[2];
-console.log("Item to try: " + itemRequested);
-
+// Start Application
 chooseFunction();
 
 
@@ -47,163 +37,122 @@ function chooseFunction() {
         type: "rawlist",
         message: "Pick a function",
         choices: [
-          "Display Inventory",
-          "Attempt a Purchase",
-          "Direct DB Quantity Check"
+        // display inventory table
+          "Display Store Inventory",
+        // "Attempt a Purchase",
+          "Attempt to Purchase",
+        // exit out
+          "Exit"
         ]
       })
       .then(function(answer) {
         switch (answer.action) {
-          case "Display Inventory":
+          case "Display Store Inventory":
             displayInventory();
             break;
-          case "Attempt a Purchase":
+          case "Attempt to Purchase":
             buySomething();
             break;
-          case "Direct DB Quantity Check":
-            queryInventory();
-            break;
+          case "Exit":
+            process.exit(0);
         }
       });
-  }
-
-
-// =========================
-// APPLICATION WALK THROUGH
-
-    // display inventory
-
-    // prompt the user for input
-        // What product ID would you like?
-        // displayInventory();
-        // itemSelect()
-        // How many?
-
-    // purchase operation
-        // function to check stock
-            // not enough in stock
-                // console.log("Sorry, Insufficient quantity!");
-            // yes
-                // function to update store quantity total
-                // function to calculate the total purchase price
-                // show a "receipt" with the total purchase price
-
-    // display inventory
-
-    // prompt the user for input
-
-// =========================
-
-// prompt for app testing
-//   display an ID for an item
-
-
-// =========================
-// Functions
-
-    // display inventory
-    function displayInventory() {
-        connection.connect(function(err) {
-            if (err) throw err;
-            // console.log("connected as id " + connection.threadId);
-            afterConnection();
-          });
-          
-          function afterConnection() {
-            connection.query("SELECT * FROM products", function(err, res) {
-              if (err) throw err;
-              console.table(res);
-              connection.end();
-              chooseFunction();
-            });
-          }
     }
 
-    // query inventory level
-    function queryInventory() {
-        connection.connect(function(err) {
-            if (err) throw err;
-            // console.log("connected as id " + connection.threadId);
-            afterConnection();
-            });
-            
-            function afterConnection() {
-            connection.query(("SELECT stock_quantity FROM products WHERE item_id IS " + itemRequested), function(err, res) {
-                if (err) throw err;
-                console.log(res);
-                connection.end();
-            });
+// DB Queries
+
+// display store inventory
+function displayInventory() {
+    // console.log("connected as id " + connection.threadId);
+    connection.query(("SELECT * FROM products"), function(err, res) {
+        if (err) throw err;
+        console.table(res);
+        chooseFunction();
+    });
+}
+
+// query quantity on hand
+function queryInventoryLevel(item, callback) {
+    connection.query(("SELECT stock_quantity FROM products WHERE item_id = " + item), function(err, res) {
+        if (err) throw err;
+        console.log("\nLet me check for you.\n");
+        var itemQuantityInStock = res[0].stock_quantity;
+        console.log(itemQuantityInStock + " of these in stock\n");
+        // return itemQuantityInStock;
+        callback(itemQuantityInStock);
+    });
+}
+
+// look up price
+function lookUpItemCost(item, callback) {
+    // console.log("Price Check!\n");
+    connection.query(("SELECT price FROM products WHERE item_id = " + item), function(err, res) {
+        if (err) throw err;
+        var itemCost = res[0].price;
+        console.log("$" + itemCost + ".00 Each\n");
+        callback(itemCost);
+    });
+}
+  
+// Primary Functions
+
+// calculate total purchase
+function calculateTotalPurchaseAmount(price, quantity) {
+    totalPurchaseAmount = price * quantity;
+    console.log("\nTotal Purchase Amount is: $" + totalPurchaseAmount + ".00");
+    return totalPurchaseAmount;
+}
+// purchase function
+function purchaseFunction(item, quantity, callback) {
+lookUpItemCost(item, function(itemPrice){
+    var totalPurchaseAmount = calculateTotalPurchaseAmount(itemPrice, quantity);
+    callback();
+    });
+}
+
+// adjust inventory
+function adjustInventory(quantity, callback) {
+    console.log("\nAdjusting inventory by: " + quantity + "\n");
+    // database stuff here in a function
+    // callback(); inside the function
+}
+
+// buy something
+function buySomething() {
+    var itemToPurchase;
+    var desiredQuantity;
+    console.log("Let's buy something!!\n");
+  
+    var purchaseQuestions = [
+      {
+        name: "item",
+        type: "input",
+        message: "Please choose an item_id"
+      }, 
+      {
+        name: "quantity",
+        type: "input",
+        message: "How many would you like?"
+      }
+    ];
+    // propmt for item selection and quantity
+    inquirer.prompt(purchaseQuestions).then(answers => {
+        itemToPurchase = answers.item;
+        desiredQuantity = parseInt(answers.quantity);
+        // console.log(typeof desiredQuantity);
+        console.log("\nItem_ID Selected: " + itemToPurchase + "\n");
+        console.log("Desired Quantity: " + desiredQuantity + "\n");
+
+        queryInventoryLevel(itemToPurchase, function(inStockQuantity) {
+            if (desiredQuantity > inStockQuantity) {
+                console.log("Apologies, we don't have enough in stock");
+                chooseFunction();
+            } else {
+                purchaseFunction(itemToPurchase, desiredQuantity, function() {
+                    adjustInventory(desiredQuantity);
+                    chooseFunction();
+                });
             }
-    }
-
-    function buySomething() {
-        console.log("Let's get that order going!");
-        // var itemRequested;
-        var quantityRequested;
-        var quantityAvailable;
-
-        inquirer
-            .prompt([
-                {
-                    name: "itemNumber",
-                    type: "input",
-                    message: "Please choose your item number."
-                },
-                {
-                    name: "quantity",
-                    type: "input",
-                    message: "How many would you like?"
-                }
-            ])
-            .then(function(answer) {
-                itemRequested = answer.itemNumber;
-                console.log("Item Number: " + itemRequested);
-                quantityRequested = answer.quantity;
-                console.log("Quantity Requested: " + quantityRequested);
-            })
-            
-    }
-
-    // user prompt
-    // function itemSelect() {
-    //     inquirer
-    //       .prompt(
-    //         {
-    //         name: "item_id",
-    //         type: "input",
-    //         message: "What product would you like to buy? Please input an Item_ID\n\n"
-    //         },
-    //         {
-    //         name: "quantity",
-    //         type: "input",
-    //         message: "How many woud you like?\n\n"
-    //         }
-    //     ).then(function(answer) {
-    //         currentSelection = answer.item_id;
-    //         console.log("Item ID Selected: " + currentSelection);
-    //       });
-        //   checkInventory();
-    //   }
-
-    // stock check
-    // function checkInventory() {
-    //     connection.connect(function(err) {
-    //         if (err) throw err;
-    //         // console.log("connected as id " + connection.threadId);
-    //         afterConnection();
-    //       });
-          
-    //       function afterConnection() {
-    //         connection.query("SELECT stock_quantity FROM products WHERE item_id IS " + currentSelection, function(err, res) {
-    //           if (err) throw err;
-    //           console.table(res);
-    //           connection.end();
-    //         });
-    //       }
-    // }
-
-
-    // adjust stock based on purchase
-
-    // calculate order total
-// =========================
+        }); 
+    });
+  }
