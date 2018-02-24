@@ -19,16 +19,21 @@ Walkthrough Video:
 
 ScreenShots:  
 
+* Start
 ![Start](./assets/1.homeScreen.png)  
 
+* Inventory
 ![Inventory](./assets/2.displayInventory.png)  
 
+* Insufficient Stock
 ![Insuffient Stock](./assets/3.attemptPurchaseStockInsufficient.png)  
-
+* Purchase
 ![Purchase](./assets/4.completedPurchase.png)  
   
+  * Adjust Inventory Noted
 ![Inventory Adjustment](./assets/5.placeholderInventoryAdjustmentProof.png)  
 
+* Exit
 ![Exit](./assets/6.exitFunction.png)  
 
 Future Enhancements:
